@@ -1,15 +1,18 @@
 package Repositories
 
-import "boilerplate-go/Config"
+import (
+	"boilerplate-go/Config"
+	"boilerplate-go/Repositories/Articles"
+)
 
 // CONSTRUCTOR STRUCT FOR ALL REPOSITORY
 type Repository struct {
-	//User                        User.Repository
+	Article Articles.Repository
 }
 
 // REPOSITORY INITIALIZATION
 func InitRepo(dbCon Config.DbConInterface) Repository {
 	return Repository{
-		//User:                        User.RepositoryNew(dbCon),
+		Article: Articles.RepositoryNew(dbCon),
 	}
 }

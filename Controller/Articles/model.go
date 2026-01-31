@@ -1,9 +1,9 @@
-package HealthCheckController
+package Articles
 
 import (
 	"boilerplate-go/Config/DTO/ConfigStructs/Utilities"
 )
 
-type healthCheck struct {
+type article struct {
 	ConfigStructs.Utilities
 }

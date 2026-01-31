@@ -1,7 +1,7 @@
-package DTO
+package ConfigStructs
 
 import "boilerplate-go/Repositories"
 
-type ModuleConfig struct {
+type ModuleConfigs struct {
 	Repo Repositories.Repository
 }

@@ -5,4 +5,5 @@ type EnvironmentConfig struct {
 	Logging   LoggingConfig   `yaml:"logging"`
 	Databases DatabasesConfig `yaml:"databases"`
 	Email     EmailConfig     `yaml:"email"`
+	News      NewsConfig      `yaml:"news_api"`
 }

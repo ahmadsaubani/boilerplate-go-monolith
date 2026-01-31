@@ -8,7 +8,6 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-// 28cc73b964a3bfe4d4cc0cea3a3e3cca
 func (e EmailSetting) dialMail() *gomail.Dialer {
 	dialer := gomail.NewDialer(
 		e.Config.Host,
@@ -18,7 +17,7 @@ func (e EmailSetting) dialMail() *gomail.Dialer {
 	)
 
 	dialer.TLSConfig = &tls.Config{
-		InsecureSkipVerify: true, // local saja
+		InsecureSkipVerify: true,
 	}
 
 	return dialer

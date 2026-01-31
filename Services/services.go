@@ -2,9 +2,12 @@ package Services
 
 import (
 	"boilerplate-go/Config"
-	"boilerplate-go/Config/DTO"
+	"boilerplate-go/Config/DTO/ConfigStructs/ModuleConfigs"
+	utilities "boilerplate-go/Config/DTO/ConfigStructs/Utilities"
 	"boilerplate-go/Controller"
 	"boilerplate-go/Middlewares"
+	"boilerplate-go/Modules"
+	"boilerplate-go/Modules/Articles"
 	"boilerplate-go/Repositories"
 	"boilerplate-go/Routes"
 	"boilerplate-go/Services/Emails"
@@ -35,15 +38,15 @@ var AppEnvFlag = flag.String(
 func init() {
 	flag.Parse()
 
-	env := resolveEnv(*AppEnvFlag)
-	routesConfig = buildGinEngine(env)
-
-	routesConfig.Use(
-		Middlewares.Middleware(),
-		Middlewares.GinLogger(),
-		Middlewares.HTTPErrorLogger(),
-		Middlewares.RecoveryWithLogger(),
-	)
+	//env := resolveEnv(*AppEnvFlag)
+	//routesConfig = buildGinEngine(env)
+	//
+	//routesConfig.Use(
+	//	Middlewares.Middleware(),
+	//	Middlewares.GinLogger(),
+	//	Middlewares.HTTPErrorLogger(),
+	//	Middlewares.RecoveryWithLogger(),
+	//)
 
 }
 
@@ -79,9 +82,7 @@ func buildGinEngine(env AppEnv) *gin.Engine {
 		return gin.New()
 
 	default:
-		//gin.SetMode(gin.DebugMode)
 		gin.SetMode(gin.ReleaseMode)
-		//return gin.Default()
 		return gin.New()
 	}
 }
@@ -90,15 +91,28 @@ func AppInitialization() {
 	newConfig := Config.GetEnvironment(*AppEnvFlag).LoadConfig()
 	Config.InitLoggerFromConfig(newConfig.Environment.Logging)
 
+	env := resolveEnv(*AppEnvFlag)
+	routesConfig = buildGinEngine(env)
+
+	routesConfig.Use(
+		Middlewares.Middleware(),
+		Middlewares.GinLogger(),
+		Middlewares.HTTPErrorLogger(),
+		Middlewares.RecoveryWithLogger(),
+	)
+
 	connection := newConfig.Database.BuildConnection()
 	service := serviceInit(newConfig.Environment)
 	_ = Repositories.InitRepo(connection)
-	_ = DTO.ModuleConfig{
-		Repositories.InitRepo(connection),
+	ModulesConfig := ConfigStructs.ModuleConfigs{
+		Repo: Repositories.InitRepo(connection),
 	}
-
-	utilities := DTO.Utilities{
+	newsConfig := newConfig.Environment.News
+	utilities := utilities.Utilities{
 		Email: service.Email,
+		Modules: Modules.Modules{
+			ArticleModule: Articles.NewModule(ModulesConfig, newsConfig),
+		},
 	}
 	newConfig.Routes = &Routes.Routes{
 		Controller: Controller.InitControllerApi(utilities),

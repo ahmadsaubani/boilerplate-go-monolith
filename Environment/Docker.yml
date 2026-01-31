@@ -41,3 +41,6 @@ email:
   port: 587
   user: "smtp@mailtrap.io"
   email_from: "hello@demomailtrap.co"
+news_api:
+  host: "https://api.thenewsapi.com/v1/news/all"
+  api_token: ""

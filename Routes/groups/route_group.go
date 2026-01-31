@@ -1,9 +1,9 @@
 package groups
 
 type apiGroup struct {
-	//Tracking       iTrackingGroup
+	ArticleGroup iArticleGroup
 }
 
 var RoutesGroupCollection = apiGroup{
-	//Tracking:       newRouterGroup(),
+	ArticleGroup: newArticleRouterGroup(),
 }
