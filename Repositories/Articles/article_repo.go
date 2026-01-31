@@ -101,30 +101,21 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 
 	tx, err := db.Begin()
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 	defer tx.Rollback()
 
 	for _, item := range items {
-
-		// =========================
-		// ARTICLE
-		// =========================
 		var articleID int
-
-		// 1️⃣ CARI DULU
 		err = tx.QueryRow(`
 			SELECT id FROM articles WHERE url = $1
 		`, item.URL).Scan(&articleID)
 
 		if err != nil {
 			if err != sql.ErrNoRows {
-				fmt.Println("1 ", err)
 				return
 			}
 
-			// 2️⃣ BELUM ADA → INSERT
 			articleUUID := uuid.New()
 
 			err = tx.QueryRow(`
@@ -138,7 +129,7 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 					source,
 					created_at,
 					updated_at
-				) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+				) VALUES ($1,$2,$3,$4,$5,$6,$7,now(),now())
 				RETURNING id
 			`,
 				articleUUID,
@@ -148,8 +139,6 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 				item.ImageURL,
 				item.PublishedAt,
 				item.Source,
-				item.CreatedAt,
-				item.UpdatedAt,
 			).Scan(&articleID)
 
 			if err != nil {
@@ -165,7 +154,6 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 
 			if err != nil {
 				if err != sql.ErrNoRows {
-					fmt.Println("3 ", err)
 					return
 				}
 				categoryUUID := uuid.New()
@@ -181,7 +169,6 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 				`, categoryUUID, cat.Label, value).Scan(&categoryID)
 
 				if err != nil {
-					fmt.Println("4 ", err)
 					return
 				}
 			}
