@@ -1,0 +1,43 @@
+app:
+  name: "Boilerplate"
+  debug: true
+  port: "3000"
+  host: "0.0.0.0"
+  service: "http"
+  certificate:
+  pem_key:
+logging:
+  service_name: "boilerplate-go-dev"
+  log_path: "./Logs/app"
+  enable_stdout: true
+  enable_file: true
+  enable_loki: false
+databases:
+  - name: "boilerplate"
+    engine: "postgres"
+    username: "root"
+    password: "password"
+    port: "5432"
+    host: "postgres"
+    maximum_connection: 20
+    maximum_idle_time: 30s
+    usage: "Main databases!"
+    connection: "mainDB"
+  - name: ""
+    engine: "redis"
+    username: ""
+    password: ""
+    port: "6379"
+    host: "redis"
+    maximum_connection: 20
+    usage: "Main databases!"
+    connection: "mainDBRedis"
+api:
+  read_timeout: 30
+  write_timeout: 30
+  idle_timeout: 30
+email:
+  host: "live.smtp.mailtrap.io"
+  port: 587
+  user: "smtp@mailtrap.io"
+  email_from: "hello@demomailtrap.co"

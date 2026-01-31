@@ -19,6 +19,7 @@ const (
 	EnvProduction  AppEnv = "Production"
 	EnvStaging     AppEnv = "Staging"
 	EnvTest        AppEnv = "Test"
+	EnvDocker      AppEnv = "Docker"
 )
 
 type AppEnv string
@@ -60,6 +61,8 @@ func resolveEnv(input string) AppEnv {
 		return EnvStaging
 	case "test", "testing":
 		return EnvTest
+	case "docker":
+		return EnvDocker
 	default:
 		return EnvDevelopment
 	}

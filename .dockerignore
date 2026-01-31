@@ -1,0 +1,88 @@
+# ===========================
+# .dockerignore
+# Files and directories to ignore during Docker build
+# ===========================
+
+# Git
+.git
+.gitignore
+README.md
+
+# Documentation
+*.md
+docs/
+
+# Development files
+.env*
+.air.toml
+docker-compose*.yml
+Makefile
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs and temporary files
+*.log
+Logs/
+tmp/
+temp/
+
+# Test files
+*_test.go
+test/
+coverage.out
+coverage.html
+
+# Build artifacts
+main
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Dependency directories
+vendor/
+node_modules/
+
+# Go specific
+*.test
+*.prof
+*.out
+.coverage
+
+# Docker files (don't copy them into the image)
+Dockerfile*
+.dockerignore
+
+# Infrastructure files
+Infrastructures/
+scripts/
+deployments/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Cache directories
+.cache/
+.tmp/
