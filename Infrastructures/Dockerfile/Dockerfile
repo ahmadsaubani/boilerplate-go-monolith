@@ -24,7 +24,7 @@ FROM alpine:3.20
 
 RUN apk add --no-cache ca-certificates tzdata wget
 
-ARG APP_ENV=production
+ARG APP_ENV=Production
 ENV env_state=$APP_ENV
 
 EXPOSE 3000
