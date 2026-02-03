@@ -38,17 +38,6 @@ var AppEnvFlag = flag.String(
 
 func init() {
 	flag.Parse()
-
-	//env := resolveEnv(*AppEnvFlag)
-	//routesConfig = buildGinEngine(env)
-	//
-	//routesConfig.Use(
-	//	Middlewares.Middleware(),
-	//	Middlewares.GinLogger(),
-	//	Middlewares.HTTPErrorLogger(),
-	//	Middlewares.RecoveryWithLogger(),
-	//)
-
 }
 
 func resolveEnv(input string) AppEnv {

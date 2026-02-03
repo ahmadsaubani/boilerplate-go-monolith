@@ -2,13 +2,13 @@ package Config
 
 import (
 	"database/sql"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"runtime"
 	"syscall"
 	"time"
@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ENVIRONMENT_PATH = "../Environment/"
+	ENVIRONMENT_PATH = "Environment"
 	REDIS            = "redis"
 	POSTGRES         = "postgres"
 )
@@ -28,9 +28,11 @@ const (
 type envFile []byte
 
 func GetEnvironment(env string) Config {
-	_, filename, _, _ := runtime.Caller(1)
-	envPath := path.Join(path.Dir(filename), ENVIRONMENT_PATH+env+".yml")
-	fmt.Println(envPath)
+	base := os.Getenv("APP_PATH")
+	if base == "" {
+		base = "."
+	}
+	envPath := filepath.Join(base, ENVIRONMENT_PATH, env+".yml")
 	_, err := os.Stat(envPath)
 	if err != nil {
 		log.Println(err.Error())
