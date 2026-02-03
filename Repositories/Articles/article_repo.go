@@ -23,6 +23,13 @@ func (a article) GetAllArticles(params General.RequestParamDTO) (resp []Articles
 		direction = strings.TrimSpace(strings.ToLower(parts[1]))
 	}
 
+	limit := params.PerPage
+	page := params.Page
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
 	query := fmt.Sprintf(`
 	SELECT
 		a.id,
@@ -55,7 +62,7 @@ func (a article) GetAllArticles(params General.RequestParamDTO) (resp []Articles
 	LIMIT $1 OFFSET $2
 `, field, direction)
 
-	args := []interface{}{params.PerPage, params.Page}
+	args := []interface{}{limit, offset}
 	rows, err := conn.Query(query, args...)
 	if err != nil {
 		Helpers.LogInfo(err.Error())
