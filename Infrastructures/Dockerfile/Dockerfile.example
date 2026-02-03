@@ -30,7 +30,7 @@ ENV env_state=$APP_ENV
 WORKDIR /app
 
 COPY --from=builder /go/src/boilerplate-go/api-go /app/api-go
-COPY --from=builder /go/src/boilerplate-go/Environtment /app/Environtment
+COPY --from=builder /go/src/boilerplate-go/Environment /app/Environment
 
 EXPOSE 3000
 

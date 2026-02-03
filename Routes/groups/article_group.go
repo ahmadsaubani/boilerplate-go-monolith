@@ -11,7 +11,7 @@ type iArticleGroup interface {
 }
 
 func (r articleGroup) ArticleApiGroup(group *gin.RouterGroup, api Articles.ArticleControllerInterface) {
-	group.POST("/articles", api.GetAllArticle)
+	group.GET("/articles", api.GetAllArticle)
 	group.GET("/article/pulls", api.FetchArticle)
 }
 
