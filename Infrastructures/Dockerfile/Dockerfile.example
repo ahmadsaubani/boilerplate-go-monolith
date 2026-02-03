@@ -27,15 +27,15 @@ RUN apk add --no-cache ca-certificates tzdata wget
 ARG APP_ENV=Production
 ENV env_state=$APP_ENV
 
+WORKDIR /app
+
+COPY --from=builder /go/src/boilerplate-go/api-go /app/api-go
+COPY --from=builder /go/src/boilerplate-go/Environment /app/Environtment
+
 EXPOSE 3000
-
-COPY --from=builder /go/src/boilerplate-go/api-go /api-go
-COPY --from=builder /go/src/boilerplate-go/Environment /go/src/boilerplate-go/Environment
-
-WORKDIR /
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
-ENTRYPOINT ["/api-go"]
+ENTRYPOINT ["/app/api-go"]
 CMD ["--env=production"]

@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Infrastructures/Dockerfile/Dockerfile
+      dockerfile: Infrastructures/Dockerfile/Dockerfile.example
       args:
         APP_ENV: ${APP_ENV:-Docker}
     ports:
