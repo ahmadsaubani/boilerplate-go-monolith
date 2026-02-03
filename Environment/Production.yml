@@ -45,3 +45,6 @@ email:
 news_api:
   host: "https://api.thenewsapi.com/v1/news/all"
   api_token: ""
+mesh_news_api:
+  host: "https://api.newsmesh.co/v1/latest"
+  api_token: ""

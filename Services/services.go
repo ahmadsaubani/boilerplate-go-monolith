@@ -11,6 +11,7 @@ import (
 	"boilerplate-go/Repositories"
 	"boilerplate-go/Routes"
 	"boilerplate-go/Services/Emails"
+	"boilerplate-go/Services/News"
 	"flag"
 	"strings"
 
@@ -111,7 +112,7 @@ func AppInitialization() {
 	utilities := utilities.Utilities{
 		Email: service.Email,
 		Modules: Modules.Modules{
-			ArticleModule: Articles.NewModule(ModulesConfig, newsConfig),
+			ArticleModule: Articles.NewModule(ModulesConfig, newsConfig, service.News),
 		},
 	}
 	newConfig.Routes = &Routes.Routes{
@@ -128,6 +129,7 @@ func AppInitialization() {
 func serviceInit(Env *Config.EnvironmentConfig) service {
 	serv := service{
 		Email: Emails.EmailSetting{Config: &Env.Email},
+		News:  News.NewsSetting{TheNewsApi: &Env.News, MeshNewsApi: &Env.MeshNewsApi},
 	}
 	return serv
 }

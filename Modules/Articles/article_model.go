@@ -6,21 +6,25 @@ import (
 	"boilerplate-go/DTO/Articles"
 	"boilerplate-go/DTO/General"
 	"boilerplate-go/Repositories"
+	"boilerplate-go/Services/News"
 )
 
 type article struct {
-	repo    Repositories.Repository
-	newsApi Config.NewsConfig
+	repo        Repositories.Repository
+	newsApi     Config.NewsConfig
+	newsService News.NewsServices
 }
 
 type ArticleModules interface {
 	GetAllArticleModule(params General.RequestParamDTO) (resp []Articles.ArticleDTO, total int, err error)
 	FetchArticle() (err error)
+	MapNormalizedArticle(v Articles.NormalizedArticleDTO) Articles.ArticleDTO
 }
 
-func NewModule(moduleConfig ConfigStructs.ModuleConfigs, newsApi Config.NewsConfig) ArticleModules {
+func NewModule(moduleConfig ConfigStructs.ModuleConfigs, newsApi Config.NewsConfig, newsService News.NewsServices) ArticleModules {
 	return &article{
-		repo:    moduleConfig.Repo,
-		newsApi: newsApi,
+		repo:        moduleConfig.Repo,
+		newsApi:     newsApi,
+		newsService: newsService,
 	}
 }

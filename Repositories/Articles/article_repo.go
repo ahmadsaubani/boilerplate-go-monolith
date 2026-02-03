@@ -14,7 +14,7 @@ import (
 
 func (a article) GetAllArticles(params General.RequestParamDTO) (resp []Articles.ArticleDTO, total int, err error) {
 	conn := a.dbCon.PostgreMainCon()
-	parts := strings.Split(params.SortBy, ",")
+	parts := strings.Split(params.OrderBy, ",")
 	direction := "asc"
 	field := "created_at"
 
@@ -162,9 +162,11 @@ func (a article) SaveArticles(items []Articles.ArticleDTO) (err error) {
 					INSERT INTO categories (
 						uuid,
 						label,
-						value
+						value,
+					    created_at,
+					    updated_at
 					)
-					VALUES ($1,$2,$3)
+					VALUES ($1,$2,$3,now(),now())
 					RETURNING id
 				`, categoryUUID, cat.Label, value).Scan(&categoryID)
 

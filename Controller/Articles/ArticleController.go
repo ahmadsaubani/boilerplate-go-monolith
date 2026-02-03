@@ -24,7 +24,7 @@ func (a article) GetAllArticle(g *gin.Context) {
 	var params General.RequestParamDTO
 	params.Page, _ = strconv.Atoi(g.DefaultQuery("page", "1"))
 	params.PerPage, _ = strconv.Atoi(g.DefaultQuery("per_page", "10"))
-	params.SortBy = g.DefaultQuery("sort_by", "desc")
+	params.OrderBy = g.DefaultQuery("order_by", "desc")
 	res, total, err := a.Modules.ArticleModule.GetAllArticleModule(params)
 	if err != nil {
 		logging.MarkErrorLogged(g)
