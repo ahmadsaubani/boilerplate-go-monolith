@@ -13,6 +13,32 @@ logging:
   enable_file: true
   enable_loki: true
   enable_rotation: true
+alerts:
+   enabled: true
+   min_level: "ERROR"      # WARN, ERROR, CRITICAL
+   rate_limit_sec: 300        # 5 minutes between same error
+   discord:
+     enabled: true
+     webhook_url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+     username: "Error Bot"
+   slack:
+     enabled: false
+     webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+     channel: "#alerts"
+   telegram:
+     enabled: false
+     bot_token: "123456:ABC-DEF..."
+     chat_id: "-1001234567890"
+   email:
+     enabled: true
+     smtp_host: "live.smtp.mailtrap.io"
+     smtp_port: 587
+     username: "smtp@mailtrap.io"
+     password: ""
+     from: "hello@demomailtrap.co"
+     to:
+       - "yourgmail@gmail.com"
+     use_tls: false
 databases:
   - name: "boilerplate"
     engine: "postgres"

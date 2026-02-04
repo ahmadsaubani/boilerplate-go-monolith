@@ -3,7 +3,7 @@ module boilerplate-go
 go 1.25.1
 
 require (
-	github.com/ahmadsaubani/go-logging-lib v1.2.2
+	github.com/ahmadsaubani/go-logging-lib v1.3.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/goccy/go-yaml v1.19.2
