@@ -25,9 +25,12 @@ A clean and modular Go REST API boilerplate built with Gin framework, featuring 
 ## 📂 Project Structure
 
 ```
-boilerplate-go/
+boilerplate-go-monolith/
 ├── 📁 Config/                     # Configuration management
 │   ├── 📁 DTO/                    # Data Transfer Objects
+│   │   ├── 📁 ConfigStructs/      # Configuration structs
+│   │   │   └── 📁 Alerts/         # Alert notification DTOs
+│   │   │       └── alert.go       # LoggingConfig, AlertConfig, platform configs
 │   │   ├── config.go              # DTO package documentation
 │   │   ├── module_config.go       # Repository configuration
 │   │   └── utilities.go           # Service utilities
@@ -39,7 +42,7 @@ boilerplate-go/
 │   ├── engine.go                  # Environment loading & HTTP server
 │   ├── environment_config.go      # Main environment config container
 │   ├── interfaces.go              # Configuration interfaces
-│   └── logging_config.go          # Logging configuration & setup
+│   └── logging_config.go          # Logging configuration & alert setup
 ├── 📁 Controller/                 # HTTP request handlers
 │   └── 📁 HealthCheckController/  # Health check endpoints
 │       └── HealthCheckController.go
@@ -51,11 +54,12 @@ boilerplate-go/
 │       ├── log.go                # Logging helper functions
 │       └── response.go           # HTTP response helpers
 ├── 📁 Logs/                      # Application logs (gitignored)
-│   ├── app.access-YYYY-MM-DD.log  # Access logs
-│   ├── app.error-YYYY-MM-DD.log   # Error logs
-│   └── app.error-loki-YYYY-MM-DD.log # Structured JSON logs
+│   ├── app.access.log            # Access logs (or app.access-YYYY-MM-DD.log with rotation)
+│   ├── app.error.log             # Error logs (human-readable)
+│   └── app.loki.log              # Structured JSON logs for Loki/Grafana
 ├── 📁 Middlewares/               # Gin middleware
 │   └── log_middleware.go         # Logging middleware integration
+├── 📁 Modules/                   # Feature modules
 ├── 📁 Repositories/              # Data access layer
 ├── 📁 Routes/                    # Route definitions
 ├── 📁 Services/                  # Business logic layer
@@ -63,7 +67,9 @@ boilerplate-go/
 │   │   ├── email.go
 │   │   └── email_model.go
 │   └── services.go              # Service initialization
+├── 📁 Infrastructures/          # Infrastructure setup
 ├── .gitignore                   # Git ignore file
+├── docker-compose.yml           # Docker configuration
 ├── go.mod                       # Go module definition
 ├── go.sum                       # Go module checksums
 ├── main.go                      # Application entry point
@@ -143,13 +149,43 @@ app:
   port: "3000"
   host: "localhost"
   service: "http"
+  certificate:
+  pem_key:
 
 logging:
   service_name: "boilerplate-go-dev"
-  log_path: "./Logs/app"
+  log_path: "./Logs"
+  file_prefix: "app"
   enable_stdout: true
   enable_file: true
-  enable_loki: false
+  enable_loki: true
+  enable_rotation: false
+  alerts:
+    enabled: true
+    min_level: "ERROR"
+    rate_limit_sec: 300
+    discord:
+      enabled: false
+      webhook_url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+      username: "Error Bot"
+    slack:
+      enabled: false
+      webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+      channel: "#alerts"
+    telegram:
+      enabled: false
+      bot_token: "123456:ABC-DEF..."
+      chat_id: "-1001234567890"
+    email:
+      enabled: true
+      smtp_host: "smtp.gmail.com"
+      smtp_port: 587
+      username: "alerts@example.com"
+      password: "app-password"
+      from: "alerts@example.com"
+      to:
+        - "dev@example.com"
+      use_tls: false
 
 databases:
   - name: "boilerplate"
@@ -186,24 +222,104 @@ email:
   email_from: "noreply@example.com"
 ```
 
+### Alert Configuration
+
+| Platform | Required Fields | Optional Fields |
+|----------|-----------------|-----------------|
+| Discord | `webhook_url` | `username`, `avatar_url` |
+| Slack | `webhook_url` | `channel`, `username`, `icon_emoji` |
+| Telegram | `bot_token`, `chat_id` | - |
+| Email | `smtp_host`, `smtp_port`, `from`, `to` | `username`, `password`, `use_tls`, `skip_verify` |
+
+### Alert Levels
+
+| Level | Priority | Trigger Condition |
+|-------|----------|-------------------|
+| WARN | 1 | Status 300-399 with error |
+| ERROR | 2 | Status 400-499 with error |
+| CRITICAL | 3 | Status 500+ or explicit critical |
+
+Setting `min_level: "ERROR"` triggers alerts for ERROR and CRITICAL only.
+
 ---
 
 ## 📊 Logging System
 
 This project uses [go-logging-lib](https://github.com/ahmadsaubani/go-logging-lib) for comprehensive logging with:
 
-- **📅 Daily Log Rotation** - Automatic dated log files
+- **📅 Daily Log Rotation** - Automatic dated log files (optional)
 - **🎯 Multi-format Output** - Console, file, and JSON formats
 - **🚀 Gin Integration** - Native middleware with anti-duplication
 - **📡 Structured Logging** - Request metadata injection
+- **🚨 Alert Notifications** - Send errors to Discord, Slack, Telegram, Email
 
 ### Log Files
 
 ```
 Logs/
-├── app.access-2024-01-31.log      # Access logs (HTTP requests)
-├── app.error-2024-01-31.log       # Error logs (human-readable)
-└── app.error-loki-2024-01-31.log  # JSON logs (for monitoring)
+├── app.access.log      # Access logs (HTTP requests)
+├── app.error.log       # Error logs (human-readable)
+└── app.loki.log        # JSON logs (for Loki/Grafana monitoring)
+```
+
+With `enable_rotation: true`:
+```
+Logs/
+├── app.access-2026-02-04.log
+├── app.error-2026-02-04.log
+└── app.loki-2026-02-04.log
+```
+
+### Unified Loki JSON Format
+
+All requests are logged in a consistent JSON structure for Grafana visualization:
+
+**Success Response:**
+```json
+{
+    "ts": "2026-02-04T22:13:29+07:00",
+    "level": "INFO",
+    "service": "boilerplate-go-dev",
+    "request_id": "27fd79fe-1e04-47a9-8c56-683269a4c5f0",
+    "status_code": 200,
+    "latency_ms": 15,
+    "http": {
+        "ip": "127.0.0.1",
+        "method": "GET",
+        "path": "/ping",
+        "ua": "Mozilla/5.0"
+    },
+    "errors": null
+}
+```
+
+**Error Response:**
+```json
+{
+    "ts": "2026-02-04T22:13:29+07:00",
+    "level": "CRITICAL",
+    "service": "boilerplate-go-dev",
+    "request_id": "27fd79fe-1e04-47a9-8c56-683269a4c5f0",
+    "status_code": 500,
+    "latency_ms": 0,
+    "http": {
+        "ip": "127.0.0.1",
+        "method": "POST",
+        "path": "/users",
+        "ua": "Mozilla/5.0"
+    },
+    "errors": {
+        "error": "database connection failed",
+        "source": {
+            "file": "user_handler.go",
+            "line": 45
+        },
+        "stack": [
+            "user_handler.go:45 handlers.CreateUser",
+            "context.go:192 gin.(*Context).Next"
+        ]
+    }
+}
 ```
 
 ### Logging in Code
@@ -214,7 +330,7 @@ func ExampleHandler(c *gin.Context) {
     // Manual error logging with anti-duplication
     err := someService.DoSomething()
     if err != nil {
-        // LogErrorWithMark logs to error log, loki, and marks as logged
+        // LogErrorWithMark logs to error log, loki, triggers alert, and marks as logged
         Config.AppLogger.LogErrorWithMark(c, err)
         c.JSON(500, gin.H{"error": "Something went wrong"})
         return
@@ -223,6 +339,17 @@ func ExampleHandler(c *gin.Context) {
     // Success response
     c.JSON(200, gin.H{"message": "Success"})
 }
+```
+
+### Triggering Alerts
+
+```go
+// Option 1: Manual error logging (recommended)
+Config.AppLogger.LogErrorWithMark(c, err)
+
+// Option 2: Set error in context (middleware handles alert)
+logging.SetLoggedError(c, err)
+c.JSON(500, gin.H{"error": "Internal error"})
 ```
 
 ---
