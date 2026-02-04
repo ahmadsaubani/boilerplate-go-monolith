@@ -11,7 +11,8 @@ logging:
   log_path: "./Logs/app"
   enable_stdout: true
   enable_file: true
-  enable_loki: false
+  enable_loki: true
+  enable_rotation: true
 databases:
   - name: "boilerplate"
     engine: "postgres"

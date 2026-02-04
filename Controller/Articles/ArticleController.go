@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ahmadsaubani/go-logging-lib"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +26,6 @@ func (a article) GetAllArticle(g *gin.Context) {
 	params.OrderBy = g.DefaultQuery("order_by", "desc")
 	res, total, err := a.Modules.ArticleModule.GetAllArticleModule(params)
 	if err != nil {
-		logging.MarkErrorLogged(g)
 		Helpers.HttpResponseError(g, nil, 500)
 		return
 	}
@@ -37,7 +35,6 @@ func (a article) GetAllArticle(g *gin.Context) {
 func (a article) FetchArticle(g *gin.Context) {
 	err := a.Modules.ArticleModule.FetchArticle()
 	if err != nil {
-		logging.MarkErrorLogged(g)
 		Helpers.HttpResponseError(g, nil, 500)
 		return
 	}

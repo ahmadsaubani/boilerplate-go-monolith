@@ -3,9 +3,7 @@ package HealthCheckController
 import (
 	"boilerplate-go/Config/DTO/ConfigStructs/Utilities"
 	"boilerplate-go/Libraries/Helpers"
-	"context"
 
-	logging "github.com/ahmadsaubani/go-logging-lib"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,15 +16,13 @@ func NewController(u ConfigStructs.Utilities) HealthCheckInterface {
 }
 
 func (h healthCheck) Ping(g *gin.Context) {
-
-	mail := h.Email.Set([]string{"gshintas40@gmail.com"}, "testing", "<h1>Hello from Golang 🚀</h1>")
-	Helpers.LogInfo("testing info")
-
-	go func(ctx context.Context) {
-		if err := h.Email.Send(ctx, mail); err != nil {
-			logging.MarkErrorLogged(g)
-		}
-	}(g.Request.Context())
+	// example send email
+	//mail := h.Email.Set([]string{"yourmail@gmail.com"}, "testing", "<h1>Hello from Golang</h1>")
+	//go func(ctx context.Context) {
+	//	if err := h.Email.Send(ctx, mail); err != nil {
+	//		Config.AppLogger.LogErrorWithMark(g, err)
+	//	}
+	//}(g.Request.Context())
 
 	data := make(map[string]interface{})
 	data["message"] = "pong"

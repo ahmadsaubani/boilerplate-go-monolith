@@ -214,8 +214,8 @@ func ExampleHandler(c *gin.Context) {
     // Manual error logging with anti-duplication
     err := someService.DoSomething()
     if err != nil {
-        Config.AppLogger.Error(c.Request.Context(), err)
-        logging.MarkErrorLogged(c) // Prevent middleware duplication
+        // LogErrorWithMark logs to error log, loki, and marks as logged
+        Config.AppLogger.LogErrorWithMark(c, err)
         c.JSON(500, gin.H{"error": "Something went wrong"})
         return
     }
