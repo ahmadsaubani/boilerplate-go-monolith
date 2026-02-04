@@ -9,6 +9,7 @@ import (
 type LoggingConfig struct {
 	ServiceName    string `yaml:"service_name"`
 	LogPath        string `yaml:"log_path"`
+	FilePrefix     string `yaml:"file_prefix"`
 	EnableStdout   bool   `yaml:"enable_stdout"`
 	EnableFile     bool   `yaml:"enable_file"`
 	EnableLoki     bool   `yaml:"enable_loki"`
@@ -18,9 +19,16 @@ type LoggingConfig struct {
 var AppLogger *logging.Logger
 
 func InitLoggerFromConfig(loggingConfig LoggingConfig) {
+	// Set default file prefix if not specified
+	filePrefix := loggingConfig.FilePrefix
+	if filePrefix == "" {
+		filePrefix = "app"
+	}
+
 	config := &logging.Config{
 		ServiceName:    loggingConfig.ServiceName,
 		LogPath:        loggingConfig.LogPath,
+		FilePrefix:     filePrefix,
 		EnableStdout:   loggingConfig.EnableStdout,
 		EnableFile:     loggingConfig.EnableFile,
 		EnableLoki:     loggingConfig.EnableLoki,

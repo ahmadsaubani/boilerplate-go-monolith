@@ -3,7 +3,7 @@ module boilerplate-go
 go 1.25.1
 
 require (
-	github.com/ahmadsaubani/go-logging-lib v1.1.0
+	github.com/ahmadsaubani/go-logging-lib v1.2.2
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/goccy/go-yaml v1.19.2
@@ -48,5 +48,3 @@ require (
 	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )
-
-replace github.com/ahmadsaubani/go-logging-lib => /Users/ahmadsaubani/Environtment/belajar/go-logging-lib

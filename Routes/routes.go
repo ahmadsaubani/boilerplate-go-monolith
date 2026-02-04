@@ -18,15 +18,6 @@ func (app *Routes) CollectRoutes() *gin.Engine {
 
 	appRoute := app.Gin
 	apiGroup := groups.RoutesGroupCollection
-	appRoute.Use(gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
-		Helpers.HttpResponseError(
-			c,
-			"internal server error",
-			http.StatusInternalServerError,
-		)
-	}))
-
-	// ✅ 404 handler
 	appRoute.NoRoute(func(c *gin.Context) {
 		Helpers.HttpResponseError(
 			c,
