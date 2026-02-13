@@ -25,6 +25,14 @@ func (app *Routes) CollectRoutes() *gin.Engine {
 			http.StatusNotFound,
 		)
 	})
+
+	appRoute.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
+			"service": "running",
+		})
+	})
+	
 	appRoute.GET("/ping", app.Controller.HealthCheck.Ping)
 
 	articleGroup := appRoute.Group("/api/v1")
